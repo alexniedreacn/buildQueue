@@ -1,0 +1,23 @@
+{
+  "name": "alexniedreacn/autoqueue",
+  "description": "description_text",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "author's name",
+      "email": "email@example.com"
+    }
+  ],
+  "require": {
+    "symfony/console": "^3.0",
+    "symfony/var-dumper": "^3.0",
+    "knplabs/github-api": "~1.5",
+    "symfony/yaml": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "BuildQueue\\": "src/"
+    }
+  }
+}

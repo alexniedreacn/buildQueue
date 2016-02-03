@@ -1,0 +1,14 @@
+deploy:
+  file: './enrich/environment_definition/test1/environment_definition.def'
+  repo: 'DNI-New-Platform/fusion_enriched_site_definition'
+
+#Get these credentials from: https://devbuild.dnitv.net/user/<yourUserName>/configure -> Show API Token
+api:
+  passkey: '<yourPassKey>'
+  username: '<yourUserName>'
+  build_url: 'https://devbuild.dnitv.net'
+
+repositories:
+  fusion-api-epg: 'epg_dnitv_com'
+  fusion-api-device: 'internal_mobile_apps_fusion'
+  fusion-api-dummy: 'none'
