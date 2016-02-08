@@ -3,6 +3,8 @@
 require 'vendor/autoload.php';
 
 use BuildQueue\Command\BuildCommand;
+use BuildQueue\Command\DeployCommand;
+use BuildQueue\Services\DeployService;
 use BuildQueue\Services\Jenkins;
 use Symfony\Component\Console\Application;
 use Guzzle\Http\Client as GuzzleClient;
@@ -19,9 +21,19 @@ $jenkins = new Jenkins(
     $config['api']['passkey']
 );
 
+$deployService = new DeployService($config);
+
+$deployCommand = new DeployCommand();
+$deployCommand->setJenkins($jenkins)
+    ->setDeployService($deployService)
+    ->setConfig($config);
+
 $buildCommand = new BuildCommand();
 $buildCommand->setJenkins($jenkins)
+    ->setDeployService($deployService)
     ->setConfig($config);
 
 $console->add($buildCommand);
+$console->add($deployCommand);
+
 $console->run();

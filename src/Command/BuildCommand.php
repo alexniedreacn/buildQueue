@@ -4,6 +4,7 @@ namespace BuildQueue\Command;
 
 use BuildQueue\DataObject\BuildResult;
 use BuildQueue\DataObject\DeployResult;
+use BuildQueue\Services\DeployService;
 use BuildQueue\Services\Jenkins;
 use Guzzle\Http\Message\Header;
 use Symfony\Component\Console\Command\Command;
@@ -24,6 +25,11 @@ class BuildCommand extends Command
     private $jenkins;
 
     /**
+     * @var DeployService
+     */
+    private $deployService;
+
+    /**
      * @var array
      */
     private $config;
@@ -36,6 +42,17 @@ class BuildCommand extends Command
     public function setJenkins(Jenkins $jenkins)
     {
         $this->jenkins = $jenkins;
+        return $this;
+    }
+
+    /**
+     * @param DeployService $deployService
+     *
+     * @return BuildCommand
+     */
+    public function setDeployService(DeployService $deployService)
+    {
+        $this->deployService = $deployService;
         return $this;
     }
 
@@ -84,7 +101,7 @@ class BuildCommand extends Command
         $buildSuccess = $buildResult->getResult() == BuildResult::SUCCESS;
 
         if ($buildSuccess) {
-            $deployResult = $this->deploy($repo, $buildResult->getBuildId(), $output);
+            $deployResult = $this->deployService->deploy($repo, $buildResult->getBuildId(), $output);
         } else {
             $output->writeln("<error>Build failed. Skipping deployment.</error>");
         }
@@ -99,49 +116,17 @@ class BuildCommand extends Command
             return 1;
         }
 
-        return 0;
-    }
+            return 0;
+        }
 
     private function firstRun(OutputInterface $output)
     {
         if (!is_dir('./enrich')) {
             $output->writeln("<info>First launch detected. Cloning the deployment repo.</info>");
             $repo = $this->config['deploy']['repo'];
-            `git clone git@github.com:$repo.git ./enrich`;
+            `git clone git@github.com:$repo.git ./enrich --progress 2>&1`;
             $output->writeln("<info>Done</info>");
         }
-    }
-
-    public function deploy($repo, $buildId, OutputInterface $output)
-    {
-        $repoMapping = $this->config['repositories'];
-
-        if (!isset($repoMapping[$repo])) {
-            $output->writeln("<error>No build key found for repo: $repo</error>");
-            return (new DeployResult())->setDeployResult(DeployResult::FAILURE);
-        }
-
-        `cd enrich && git pull`;
-
-        $mappedName = $repoMapping[$repo];
-        $content = file_get_contents($this->config['deploy']['file']);
-        $content = preg_replace('#^('.$mappedName.'\s?=\s?)\d+$#mi', '${1}' . $buildId, $content);
-        file_put_contents($this->config['deploy']['file'], $content);
-
-        chdir('enrich');
-        $branchName = "autodeploy-for-{$repo}-$buildId-by-{$this->config['api']['username']}";
-        `git checkout -b $branchName`;
-        `git add *`;
-        `git commit -m "Autodeploying #{$buildId} in {$repo}"`;
-        `git push -u origin $branchName`;
-        `git checkout master && git branch -D $branchName`;
-
-        $output->writeln("<comment>Create a Pull Request: https://github.com/{$this->config['deploy']['repo']}/compare/$branchName?expand=1</comment>");
-        $output->writeln("<info>Please delete the branch once the PR is closed!</info>");
-        $output->writeln("<info>Run: git push origin --delete $branchName</info>");
-        chdir('../');
-
-        return (new DeployResult())->setDeployResult(DeployResult::SUCCESS);
     }
 
     private function getBuildType($input, $output)
@@ -159,6 +144,4 @@ class BuildCommand extends Command
         $helper = new QuestionHelper();
         return $helper->ask($input, $output, $question);
     }
-
-
 }
