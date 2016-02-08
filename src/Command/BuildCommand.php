@@ -113,11 +113,11 @@ class BuildCommand extends Command
         $deploySuccess = $deployResult->getDeployResult() == DeployResult::SUCCESS;
         if ($buildSuccess && $deploySuccess) {
             BuildCache::clear($repo, $branch);
-            return 1;
-        }
-
             return 0;
         }
+
+        return 1;
+    }
 
     private function firstRun(OutputInterface $output)
     {
