@@ -73,7 +73,7 @@ class BuildCommand extends Command
     protected function configure()
     {
         $this->setName('build')
-            ->addArgument('repo', InputArgument::REQUIRED, 'Repository name')
+            ->addArgument('repo', InputArgument::OPTIONAL, 'Repository name')
             ->addArgument('branch', InputArgument::OPTIONAL, 'Branch to build')
             ->setDescription('Set the name of the repo to build');
     }
@@ -141,6 +141,9 @@ class BuildCommand extends Command
     private function getRepoName($input, $output)
     {
         $question = new Question('<question>Please provide the repo name:</question> ');
+        $repos = array_keys($this->config['repositories']);
+        $question->setAutocompleterValues($repos);
+
         $helper = new QuestionHelper();
         return $helper->ask($input, $output, $question);
     }
