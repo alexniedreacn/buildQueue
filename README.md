@@ -4,6 +4,7 @@
     * Set your Github user name
     * Generate a Github API token or run `composer config --global --list` and use the token from `github-oauth.github.com` field.
     * Update the repos list mapping for the repos you need. PRs are welcome.
+    * Install the dependencies by running `composer install`
     
 # Running the app
 
