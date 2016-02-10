@@ -14,5 +14,8 @@
 
 See `php app.php` for more details on the usage.
 
+# Quirks
+It's worth noting that, *by default*, the app creates a PR instead of direct commits to master. Change this behaviour at our own risk.
+
 # Known drawbacks
 * Currently only building test environment is supported
