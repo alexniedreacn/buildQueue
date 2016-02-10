@@ -11,4 +11,7 @@ api:
 repositories:
   fusion-api-epg: 'epg_dnitv_com'
   fusion-api-device: 'internal_mobile_apps_fusion'
+  fusion-site-www-dplay-dk: 'www_dplay_dk'
+  fusion-site-www-dplay-se: 'www_dplay_se'
+  fusion-site-www-dplay-no: 'www_dplay_no'
   fusion-api-dummy: 'none'
