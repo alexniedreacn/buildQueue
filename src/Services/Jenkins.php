@@ -147,6 +147,8 @@ class Jenkins
                 $sleepFor = ceil((($buildInfoResponse->buildableStartMilliseconds/1000) - time()) / 100);
             }
 
+            $sleepFor = max(5, $sleepFor);
+
             dump("Sleeping for $sleepFor seconds because: " . $jsonWhy); #TODO: Switch to using native Verbosity param
             sleep($sleepFor);
         } while ($jsonWhy != null && $executable == null);
