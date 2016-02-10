@@ -2,10 +2,9 @@ deploy:
   file: './enrich/environment_definition/test1/environment_definition.def'
   repo: 'DNI-New-Platform/fusion_enriched_site_definition'
 
-#Get these credentials from: https://devbuild.dnitv.net/user/<yourUserName>/configure -> Show API Token
 api:
-  passkey: '<yourPassKey>'
-  username: '<yourUserName>'
+  passkey: '<yourGithubApiToken>'
+  username: '<yourGitHubUsername>'
   build_url: 'https://devbuild.dnitv.net'
 
 repositories:
