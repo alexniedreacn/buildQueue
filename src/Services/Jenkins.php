@@ -129,7 +129,13 @@ class Jenkins
         do {
             //Get the queue URL for the build
             $buildUrl = $queueLocation . 'api/json';
-            $buildInfoResponse = $this->doGetRequest($buildUrl);
+            try {
+                $buildInfoResponse = $this->doGetRequest($buildUrl);
+            } catch (ClientErrorResponseException $e) {
+                dump("Previous queue not found, restarting build");
+                $buildCache->clear($repo, $branch);
+                return $this->createBuild($repo, $branch);
+            }
 
             $buildInfoResponse = json_decode($buildInfoResponse->getBody(true));
 
